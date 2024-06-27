@@ -1,19 +1,22 @@
-import RegisterForm from "../../components/molecules/registerForm"
-import { Card, CardHeader, CardTitle, CardContent } from "../../components/ui/card"
+import { Link } from "react-router-dom"
+import LoginForm from "../../components/molecules/loginForm"
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "../../components/ui/card"
 
 
 const login = () => {
   return (
     <main className='flex flex-col h-screen justify-center items-center gap-3'>
-    <h1 className='text-4xl font-bold'>Login Form</h1>
-    <p>Enter your email address in this fields</p>
+    <h1 className='text-4xl font-bold'>Login</h1>
     <Card className='w-1/3'>
   <CardHeader>
     <CardTitle>Hello Users</CardTitle>
   </CardHeader>
   <CardContent>
-    <RegisterForm></RegisterForm>
+    <LoginForm></LoginForm>
   </CardContent>
+  <CardFooter>
+    <Link to={"/register"}> <u>New Here ? Create an Acoount</u> </Link>
+  </CardFooter>
 </Card>
 </main>
   )

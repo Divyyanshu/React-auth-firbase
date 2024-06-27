@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
-import { createUserWithEmailAndPassword } from "firebase/auth"
+import { signInWithEmailAndPassword } from "firebase/auth"
 import { auth } from "../../lib/firebase"
 import { useNavigate } from "react-router-dom"
 
@@ -13,34 +13,45 @@ const formSchema = z.object({
   password: z.string().min(6,{
     message : "At least using 6 character"
   }).max(15),
-  confirmPassword : z.string().min(6,{
-    message : "At least using 6 character"
-  }).max(15),
 })
 
-const RegisterForm = () => {
-  
-  const navigate = useNavigate()
+const LoginForm = () => {
+const navigate = useNavigate()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       email : "",
       password : "",
-      confirmPassword :"",
     },
   })
+  
+  // function onSubmit(values: z.infer<typeof formSchema>){
+  //   console.log(values)
+  // }
 
    async function onSubmit(values: z.infer<typeof formSchema>) {
-    await createUserWithEmailAndPassword(auth,values.email,values.password)
-    console.log(values.email,values.password,values.confirmPassword)
-    navigate("/login")
-    alert("Registration is successfull")
+   await signInWithEmailAndPassword(auth,values.email,values.password)
+   .then((userCredential) => {
+
+    const user = userCredential.user;
+    console.log(user)
+    navigate("/")
+
+  })
+  .catch((error) => {
+    const errorCode:string = error.code;
+    const errorMessage:string = error.message;
+    console.log(errorCode,errorMessage)
+  });
   }
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <div>
+          
+        </div>
         <FormField
           control={form.control}
           name="email"
@@ -67,23 +78,10 @@ const RegisterForm = () => {
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="confirmPassword"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Confirm Password</FormLabel>
-              <FormControl>
-                <Input placeholder=""type="password" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
         <Button type="submit" className="w-full">Submit</Button>
       </form>
     </Form>
   )
 }
 
-export default RegisterForm
+export default LoginForm

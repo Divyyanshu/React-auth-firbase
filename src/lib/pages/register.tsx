@@ -5,8 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/ca
 const register = () => {
   return (
     <main className='flex flex-col h-screen justify-center items-center gap-3'>
-    <h1 className='text-4xl font-bold'>Register Form</h1>
-    <p>Enter your email address in this fields</p>
+    <h1 className='text-4xl font-bold'>Register</h1>
     <Card className='w-1/3'>
   <CardHeader>
     <CardTitle>Hello Users</CardTitle>
