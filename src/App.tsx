@@ -5,7 +5,6 @@ import  Register  from "./lib/pages/register"
 
 
 function App() {
-  
   return (
     <BrowserRouter>
     <Routes>

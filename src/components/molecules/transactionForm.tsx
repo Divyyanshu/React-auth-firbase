@@ -1,46 +1,51 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { z } from "zod"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form"
-import { Button } from "../ui/button"
-import { Input } from "../ui/input"
-import { RadioGroup, RadioGroupItem } from "../ui/radio-group"
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../ui/form";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { collection, addDoc } from "firebase/firestore";
-
-import { db } from "../../lib/firebase"
+import { auth, db } from "../../lib/firebase";
 
 const formSchema = z.object({
- title : z.string().min(2,{
-    message: "add minimum two character"
- }),
- description : z.string().optional(),
- amount : z.string(),
- transactionTypes : z.string(),
-})
+  title: z.string().min(2, {
+    message: "add minimum two character",
+  }),
+  description: z.string().optional(),
+  amount: z.string(),
+  transactionTypes: z.string(),
+});
 
 const TransactionForm = () => {
-  
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-     title : "",
-     amount : "",
-     description : "",
-     transactionTypes : "",
+      title: "",
+      amount: "",
+      description: "",
+      transactionTypes: "",
     },
-  })
+  });
 
-   async function onSubmit(values: z.infer<typeof formSchema>) {
-       console.log(values)
-       alert("done")
-       const docRef = await addDoc(collection(db, "transactions"), {
-        title : values.title,
-        description : values.description,
-        amount : values.amount,
-        transactionTypes : values.transactionTypes
-      });
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log(values, auth.currentUser);
+    alert("done");
+    const docRef = await addDoc(collection(db, "transactions"), {
+      uid: auth.currentUser?.uid,
+      title: values.title,
+      description: values.description,
+      amount: values.amount,
+      transactionTypes: values.transactionTypes,
+    });
   }
 
   return (
@@ -99,19 +104,15 @@ const TransactionForm = () => {
                 >
                   <FormItem className="flex items-center space-x-3 space-y-0">
                     <FormControl>
-                      <RadioGroupItem value="all" />
+                      <RadioGroupItem value={"Expance"}/>
                     </FormControl>
-                    <FormLabel className="font-normal">
-                     Expance
-                    </FormLabel>
+                    <FormLabel className="font-normal">Expance</FormLabel>
                   </FormItem>
                   <FormItem className="flex items-center space-x-3 space-y-0">
                     <FormControl>
-                      <RadioGroupItem value="mentions" />
+                      <RadioGroupItem value={"Income"}/>
                     </FormControl>
-                    <FormLabel className="font-normal">
-                      Income
-                    </FormLabel>
+                    <FormLabel className="font-normal">Income</FormLabel>
                   </FormItem>
                 </RadioGroup>
               </FormControl>
@@ -119,10 +120,12 @@ const TransactionForm = () => {
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full">Submit</Button>
+        <Button type="submit" className="w-full">
+          Submit
+        </Button>
       </form>
     </Form>
-  )
-}
+  );
+};
 
-export default TransactionForm
+export default TransactionForm;
